@@ -1,14 +1,18 @@
 package com.example.android.colourmemory.ui.main
 
+import android.content.Context
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.util.SparseBooleanArray
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.example.android.colourmemory.R
+import kotlinx.android.synthetic.main.card_item_layout.view.*
 import kotlinx.android.synthetic.main.main_fragment.view.*
+import java.util.*
 
 /**
  * 1. Randomize the ListImages[16]
@@ -29,9 +33,34 @@ import kotlinx.android.synthetic.main.main_fragment.view.*
  *    3.b.iii Go to Try 2.a
  * 4. Once all images match, show dialog to get Name and write to db
  * 5. Click on High Scores BUTTON, shows the [Rank, Name, Scores] sorted
+ *
+ * UI (view, framework)
+ *  - initializeGame
+ *  - evaluate
+ *
+ * case 1.
+ * domain
+ *  - usecase
+ *    SaveScoreUseCase()
+ *    FetchScoreUseCase()
+ *
+ * data layer (repository)
+ *  - TABLE(dkfjd): id(pirmary, auto, long), name(TEXT), score(NUMBER)
+ *
+ *  case 2.
+ *  repository
+ *  - TABLE(dkfjd): id(pirmary, auto, long), name(TEXT), score(NUMBER)
+ *  - save(name, score)
+ *  - fetch(): List<Score>
+ *
+ *      data class Score(Rank, Name, Scores)
+ *
+ * TODO
+ *  1. draw cards to gridview using adapter. (UI)
+ *  2. design database table (repository)
  */
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), MainContract.MainView {
 
     private lateinit var viewModel: MainViewModel
     private val adapter = CardsAdapter(listOf(
@@ -51,7 +80,10 @@ class MainFragment : Fragment() {
         resources.getIdentifier("colour6", "drawable", activity!!.packageName),
         resources.getIdentifier("colour7", "drawable", activity!!.packageName),
         resources.getIdentifier("colour8", "drawable", activity!!.packageName)
-    ))
+    ), context)
+
+    private val evaluateStack: Stack<Int> = Stack()
+    private val checkCards = SparseBooleanArray(8)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,34 +100,63 @@ class MainFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
+    //
+    //----------------------------------------------------------------------------------------------
+    // MainContract.MainView
+
+    /**
+     * initialize game view components
+     *  1. list[2] stack
+     *  2. init checkStatus: SpaseBooleanArray
+     *  3. ui
+     */
+    override fun initializeGame() {
+        evaluateStack.clear()
+        checkCards.clear()
+
+        // TODO init cards view
+    }
+
+    private fun randomizeCards() {
+
+    }
+
+    override fun evaluateGame(first: Int, second: Int) {
+        if (adapter.getItem(first) == adapter.getItem(second)) {
+
+        }
+    }
+
+
     companion object {
         fun newInstance() = MainFragment()
     }
 }
 
 
-class CardsAdapter(private val source: List<Int>) : BaseAdapter() {
-        var listRandomisedImages: List<Int> = emptyList()
+class CardsAdapter(private var source: List<Int> = emptyList(), private var context: Context?) : BaseAdapter() {
 
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view: View = convertView
+            ?: LayoutInflater.from(parent.context).inflate(R.layout.card_item_layout, parent, false)
 
-    fun initDataStructures() {
-        listRandomisedImages =
+        view.cardView.setImageResource(source[position])
+
+        return view
     }
 
-    override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getItem(position: Int): Any {
+        return source[position]
     }
 
-    override fun getItem(p0: Int): Any {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
-    override fun getItemId(p0: Int): Long {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getCount(): Int = source.size
 
-    override fun getCount(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    fun update(newData: List<Int>) {
+        this.source = newData
+        this.notifyDataSetChanged() // research required. why?
     }
-
 }
