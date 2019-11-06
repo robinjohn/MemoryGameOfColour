@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import androidx.annotation.DrawableRes
 import com.example.android.colourmemory.R
 import kotlinx.android.synthetic.main.card_item_layout.view.*
 import kotlinx.android.synthetic.main.main_fragment.view.*
@@ -63,32 +64,31 @@ import java.util.*
 class MainFragment : Fragment(), MainContract.MainView {
 
     private lateinit var viewModel: MainViewModel
-    private val adapter = CardsAdapter(listOf(
-        resources.getIdentifier("colour1", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour2", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour3", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour4", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour5", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour6", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour7", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour8", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour1", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour2", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour3", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour4", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour5", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour6", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour7", "drawable", activity!!.packageName),
-        resources.getIdentifier("colour8", "drawable", activity!!.packageName)
-    ), context)
 
     private val evaluateStack: Stack<Int> = Stack()
+
     private val checkCards = SparseBooleanArray(8)
+
+    private val adapter = CardsAdapter()
+    private val cards: List<Int> by lazy {
+        listOf(
+            R.drawable.colour1,
+            R.drawable.colour2,
+            R.drawable.colour3,
+            R.drawable.colour4,
+            R.drawable.colour5,
+            R.drawable.colour6,
+            R.drawable.colour7,
+            R.drawable.colour8
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+
         return inflater.inflate(R.layout.main_fragment, container, false).apply {
             gridView_Images.adapter = adapter
         }
@@ -117,6 +117,9 @@ class MainFragment : Fragment(), MainContract.MainView {
         // TODO init cards view
     }
 
+    /**
+     * mix cards resource with duplicates and return 16 array of drawable resource int
+     */
     private fun randomizeCards() {
 
     }
@@ -134,7 +137,7 @@ class MainFragment : Fragment(), MainContract.MainView {
 }
 
 
-class CardsAdapter(private var source: List<Int> = emptyList(), private var context: Context?) : BaseAdapter() {
+class CardsAdapter(@DrawableRes private var source: List<Int> = emptyList()) : BaseAdapter() {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view: View = convertView
