@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:numColumns="4"
-        android:stretchMode="spacingWidthUniform"
+        android:stretchMode="columnWidth"
         tools:listitem="@layout/card_item_layout"
         tools:context=".ui.main.MainFragment">
 

@@ -1,9 +1,9 @@
 package com.example.android.colourmemory.ui.main
 
-import android.content.Context
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.SparseBooleanArray
+import android.util.SparseIntArray
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -68,6 +68,9 @@ class MainFragment : Fragment(), MainContract.MainView {
     private val evaluateStack: Stack<Int> = Stack()
 
     private val checkCards = SparseBooleanArray(8)
+    private val checkss = mutableSetOf<Int>()
+
+    private val pairRandomised = mutableListOf(Pair(0,0))
 
 
     private val cards: MutableList<Int> by lazy {
@@ -79,9 +82,18 @@ class MainFragment : Fragment(), MainContract.MainView {
             R.drawable.colour5,
             R.drawable.colour6,
             R.drawable.colour7,
+            R.drawable.colour8,
+            R.drawable.colour1,
+            R.drawable.colour2,
+            R.drawable.colour3,
+            R.drawable.colour4,
+            R.drawable.colour5,
+            R.drawable.colour6,
+            R.drawable.colour7,
             R.drawable.colour8
         )
     }
+
     private val adapter = CardsAdapter()
 
     override fun onCreateView(
@@ -115,27 +127,59 @@ class MainFragment : Fragment(), MainContract.MainView {
         checkCards.clear()
 
         // TODO init cards view
-        randomizeCards()
-        adapter.update(cards)
+
+        adapter.update(randomizeCards())
+    }
+
+    private fun randomize(): MutableSet<Int> {
+        val idxs = linkedSetOf<Int>()
+
+        var count = 16
+        while (idxs.size < 16) {
+            val value = Random().nextInt(16)
+            if (!idxs.contains(value)) {
+                idxs.add(value)
+                count--
+            }
+            //Log.d("wlaksdf", "aasdfasdf: ${value}, size: ${idxs.size}")
+        }
+        return idxs
     }
 
     /**
      * mix cards resource with duplicates and return 16 array of drawable resource int
      */
-    private fun randomizeCards() {
-        cards.addAll(cards)
+    private fun randomizeCards(): List<Int> {
 
+        //copy cards to source and duplicate entries to 16
+
+        // <index, resource>
+        // 1. generate a list of 16 inter random number <list1>
+        // 2. generate a 16 resource array <list2>
+
+        var randomisedIndexes: List<Int> = listOf(0)
+        val shuffledCards: MutableList<Int> = mutableListOf()
+        randomisedIndexes = (1..16).map { Random().nextInt(16) }
+
+        val randomizedIx = randomize()
+        randomizedIx.forEachIndexed { index, i ->
+            shuffledCards.add(index,cards[i])
+        }
+
+        return shuffledCards
     }
 
     override fun evaluateGame(first: Int, second: Int) {
         if (adapter.getItem(first) == adapter.getItem(second)) {
-
+            checkss.add(adapter.getItem(first) as Int)
         }
     }
 
 
     companion object {
         fun newInstance() = MainFragment()
+
+
     }
 }
 
@@ -145,9 +189,6 @@ class CardsAdapter(@DrawableRes private var source: List<Int> = emptyList()) : B
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view: View = convertView
             ?: LayoutInflater.from(parent.context).inflate(R.layout.card_item_layout, parent, false)
-
-        //copy cards to source and duplicate entries to 16
-
 
         view.cardView.setImageResource(source[position])
 
