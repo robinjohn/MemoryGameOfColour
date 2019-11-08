@@ -69,9 +69,9 @@ class MainFragment : Fragment(), MainContract.MainView {
 
     private val checkCards = SparseBooleanArray(8)
 
-    private val adapter = CardsAdapter()
-    private val cards: List<Int> by lazy {
-        listOf(
+
+    private val cards: MutableList<Int> by lazy {
+        mutableListOf(
             R.drawable.colour1,
             R.drawable.colour2,
             R.drawable.colour3,
@@ -82,15 +82,15 @@ class MainFragment : Fragment(), MainContract.MainView {
             R.drawable.colour8
         )
     }
+    private val adapter = CardsAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-
         return inflater.inflate(R.layout.main_fragment, container, false).apply {
             gridView_Images.adapter = adapter
+            initializeGame()
         }
     }
 
@@ -115,12 +115,15 @@ class MainFragment : Fragment(), MainContract.MainView {
         checkCards.clear()
 
         // TODO init cards view
+        randomizeCards()
+        adapter.update(cards)
     }
 
     /**
      * mix cards resource with duplicates and return 16 array of drawable resource int
      */
     private fun randomizeCards() {
+        cards.addAll(cards)
 
     }
 
@@ -142,6 +145,9 @@ class CardsAdapter(@DrawableRes private var source: List<Int> = emptyList()) : B
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view: View = convertView
             ?: LayoutInflater.from(parent.context).inflate(R.layout.card_item_layout, parent, false)
+
+        //copy cards to source and duplicate entries to 16
+
 
         view.cardView.setImageResource(source[position])
 

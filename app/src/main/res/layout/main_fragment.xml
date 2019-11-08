@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/gridView_Images"
+<RelativeLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:numColumns="4"
-    android:stretchMode="spacingWidthUniform"
-    app:layout_constraintBottom_toTopOf="parent"
-    app:layout_constraintTop_toBottomOf="parent"
-    tools:listitem="@layout/card_item_layout"
-    tools:context=".ui.main.MainFragment">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-</GridView>
+    <GridView
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/gridView_Images"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:numColumns="4"
+        android:stretchMode="spacingWidthUniform"
+        tools:listitem="@layout/card_item_layout"
+        tools:context=".ui.main.MainFragment">
+
+    </GridView>
+</RelativeLayout>
